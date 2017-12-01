@@ -30,7 +30,7 @@ private:
     int mFileSpi;  // descripteur du fichier Spi
 
 signals:
-    void erreur(QString msg);
+    void sigErreur(QString msg);
 };
 
 #endif // CSPI_H

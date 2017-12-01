@@ -31,15 +31,17 @@ int CGpio::gpioUnexport()
     QFile fUnexport("/sys/class/gpio/unexport");
     bool res = fUnexport.open(QIODevice::WriteOnly | QIODevice::Text);
     if (!res) {
-        qDebug() << "CGpio::gpioUnexport: Erreur d'ouverture du fichier !";
-        emit erreur("CGpio::gpioUnexport: Erreur d'ouverture du fichier !");
+        QString mess="CGpio::gpioUnexport: Erreur d'ouverture du fichier !";
+        qDebug() << mess;
+        emit sigErreur(mess);
         return -1;
     } // if erreur open
     sprintf(buffer,"%d", mAddr);
     int nbw = fUnexport.write(buffer, strlen(buffer));
     if (nbw != int(strlen(buffer))) {
-        qDebug() << "CGpio::gpioUnexport: Erreur écriture dans fichier !";
-        emit erreur("CGPIO::gpioUnexport: Erreur écriture dans fichier !");
+        QString mess="CGpio::gpioUnexport: Erreur écriture dans fichier !";
+        qDebug() << mess;
+        emit sigErreur(mess);
         return -1;
     } // if nbw
     fUnexport.close();
@@ -55,8 +57,9 @@ int CGpio::gpioDirection(int dir)
     QFile fDirection(ficDirection);
     bool res = fDirection.open(QIODevice::WriteOnly | QIODevice::Text);
     if (!res) {
-        qDebug() << "CGpio::gpioDirection: Erreur d'ouverture du fichier !";
-        emit erreur("CGpio::gpioDirection: Erreur d'ouverture du fichier !");
+        QString mess="CGpio::gpioDirection: Erreur d'ouverture du fichier !";
+        qDebug() << mess;
+        emit sigErreur(mess);
         return -1;
     } // if erreur open
     if (dir==IN)
@@ -65,8 +68,9 @@ int CGpio::gpioDirection(int dir)
       strcpy(buffer,"out");
     int nbw = fDirection.write(buffer, strlen(buffer));
     if (nbw != int(strlen(buffer))) {
-        qDebug() << "CGpio::gpioDirection: Erreur écriture dans fichier !";
-        emit erreur("CGPIO::gpioDirection: Erreur écriture dans fichier !");
+        QString mess="CGpio::gpioDirection: Erreur écriture dans fichier !";
+        qDebug() << mess;
+        emit sigErreur(mess);
         return -1;
     } // if nbw
     fDirection.close();
@@ -80,15 +84,17 @@ int CGpio::gpioExport()
     QFile fExport("/sys/class/gpio/export");
     bool res = fExport.open(QIODevice::WriteOnly | QIODevice::Text);
     if (!res) {
-        qDebug() << "CGpio::gpioExport: Erreur d'ouverture du fichier !";
-        emit erreur("CGpio::gpioExport: Erreur d'ouverture du fichier !");
+        QString mess="CGpio::gpioExport: Erreur d'ouverture du fichier !";
+        qDebug() << mess;
+        emit sigErreur(mess);
         return -1;
     } // if erreur open
     sprintf(buffer,"%d", mAddr);
     int nbw = fExport.write(buffer, strlen(buffer));
     if (nbw != int(strlen(buffer))) {
-        qDebug() << "CGpio::gpioExport: Erreur écriture dans fichier !";
-        emit erreur("CGPIO::gpioExport: Erreur écriture dans fichier !");
+        QString mess="CGpio::gpioExport: Erreur écriture dans fichier !";
+        qDebug() << mess;
+        emit sigErreur(mess);
         return -1;
     } // if nbw
     fExport.close();
@@ -105,15 +111,17 @@ int CGpio::lire()
     QFile fValue(ficValue);
     bool res = fValue.open(QIODevice::ReadOnly | QIODevice::Text);
     if (!res) {
-        qDebug() << "CGpio::gpioLire: Erreur d'ouverture du fichier !";
-        emit erreur("CGpio::gpioLire: Erreur d'ouverture du fichier !");
+        QString mess="CGpio::gpioLire: Erreur d'ouverture du fichier !";
+        qDebug() << mess;
+        emit sigErreur(mess);
         return -1;
     } // if erreur open
 
     int nbr = fValue.read(buffer, sizeof(buffer));
     if (nbr == -1) {
-        qDebug() << "CGpio::gpioLire: Erreur lecture dans fichier !";
-        emit erreur("CGPIO::gpioLire: Erreur lecture dans fichier !");
+        QString mess="CGpio::gpioLire: Erreur lecture dans fichier !";
+        qDebug() << mess;
+        emit sigErreur(mess);
         return -1;
     } // if nbw
     buffer[nbr]=0;  // car NULL
@@ -130,15 +138,17 @@ int CGpio::ecrire(int value)
     QFile fValue(ficValue);
     bool res = fValue.open(QIODevice::WriteOnly | QIODevice::Text);
     if (!res) {
-        qDebug() << "CGpio::gpioEcrire: Erreur d'ouverture du fichier !";
-        emit erreur("CGpio::gpioEcrire: Erreur d'ouverture du fichier !");
+        QString mess="CGpio::gpioEcrire: Erreur d'ouverture du fichier !";
+        qDebug() << mess;
+        emit sigErreur(mess);
         return -1;
     } // if erreur open
 
     int nbw = fValue.write(&buffer[(value==0?0:1)], 1);
     if (nbw == -1) {
-        qDebug() << "CGpio::gpioEcrire: Erreur écriture dans fichier !";
-        emit erreur("CGPIO::gpioEcrire: Erreur écriture dans fichier !");
+        QString mess="CGpio::gpioEcrire: Erreur écriture dans fichier !";
+        qDebug() << mess;
+        emit sigErreur(mess);
         return -1;
     } // if nbw
     fValue.close();

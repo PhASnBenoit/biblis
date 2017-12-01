@@ -34,7 +34,7 @@ private :
     int mAddr;
 
 signals:
-    void erreur(QString msg);
+    void sigErreur(QString msg);
 };
 
 #endif // CGPIO_H

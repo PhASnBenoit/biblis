@@ -30,12 +30,16 @@ int CSpi::init()
 
     mFileSpi=open(filename, O_RDWR);
     if(mFileSpi==-1) {  // ouvre le fichier virtuel d'accès à SPI
-          qDebug("Erreur ouverture acces au bus SPI");
-          return -1;
+        QString mess="CSpi::init Erreur ouverture acces au bus SPI";
+        qDebug() << mess;
+        emit sigErreur(mess);
+        return -1;
     } // if open
     if (ioctl(mFileSpi, SPI_IOC_WR_MAX_SPEED_HZ, & mSpeed) != 0)
     {
-         qDebug("Erreur ouverture acces au bus SPI");
+        QString mess="CSpi::init Erreur ouverture acces au bus SPI";
+         qDebug() << mess;
+         emit sigErreur(mess);
          return -1;
     } // if
     return mFileSpi;

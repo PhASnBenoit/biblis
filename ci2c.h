@@ -36,7 +36,7 @@ private:
     static CI2c *mSingleton;
 
 signals:
-    void erreur(QString msg);
+    void sigErreur(QString msg);
 };
 
 #endif // CI2C_H
