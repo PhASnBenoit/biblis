@@ -2,7 +2,7 @@
 
 CGpio::CGpio(int addr, int dir)
 {
-    mAddr = addr;
+    m_addr = addr;
     gpioExport();
     init();
     gpioDirection(dir);
@@ -16,11 +16,12 @@ CGpio::~CGpio()
 int CGpio::init()
 {
     usleep(50000);
-    sprintf(mFilename,"/sys/class/gpio/gpio%d/",mAddr);
-    QString command = "sudo chmod -R 777 "+QString(mFilename);
+    sprintf(m_filename,"/sys/class/gpio/gpio%d/",m_addr);
+    QString command = "sudo chmod -R 777 "+QString(m_filename);
     QProcess *proc= new QProcess(this);
     proc->start(command);
     sleep(2);
+    delete proc;
     return 1;
 }
 
@@ -36,7 +37,7 @@ int CGpio::gpioUnexport()
         emit sigErreur(mess);
         return -1;
     } // if erreur open
-    sprintf(buffer,"%d", mAddr);
+    sprintf(buffer,"%d", m_addr);
     int nbw = fUnexport.write(buffer, strlen(buffer));
     if (nbw != int(strlen(buffer))) {
         QString mess="CGpio::gpioUnexport: Erreur écriture dans fichier !";
@@ -53,7 +54,7 @@ int CGpio::gpioDirection(int dir)
     char buffer[3];
     QString ficDirection;
 
-    ficDirection = QString("/sys/class/gpio/gpio%1/direction").arg(mAddr,0,10);
+    ficDirection = QString("/sys/class/gpio/gpio%1/direction").arg(m_addr,0,10);
     QFile fDirection(ficDirection);
     bool res = fDirection.open(QIODevice::WriteOnly | QIODevice::Text);
     if (!res) {
@@ -89,7 +90,7 @@ int CGpio::gpioExport()
         emit sigErreur(mess);
         return -1;
     } // if erreur open
-    sprintf(buffer,"%d", mAddr);
+    sprintf(buffer,"%d", m_addr);
     int nbw = fExport.write(buffer, strlen(buffer));
     if (nbw != int(strlen(buffer))) {
         QString mess="CGpio::gpioExport: Erreur écriture dans fichier !";
@@ -107,7 +108,7 @@ int CGpio::lire()
     char buffer[3];
     QString ficValue;
 
-    ficValue = QString("/sys/class/gpio/gpio%1/value").arg(mAddr,0,10);
+    ficValue = QString("/sys/class/gpio/gpio%1/value").arg(m_addr,0,10);
     QFile fValue(ficValue);
     bool res = fValue.open(QIODevice::ReadOnly | QIODevice::Text);
     if (!res) {
@@ -134,7 +135,7 @@ int CGpio::ecrire(int value)
     char buffer[3]={'0', '1'};
     QString ficValue;
 
-    ficValue = QString("/sys/class/gpio/gpio%1/value").arg(mAddr,0,10);
+    ficValue = QString("/sys/class/gpio/gpio%1/value").arg(m_addr,0,10);
     QFile fValue(ficValue);
     bool res = fValue.open(QIODevice::WriteOnly | QIODevice::Text);
     if (!res) {

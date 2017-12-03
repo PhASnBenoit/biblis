@@ -18,16 +18,16 @@ class CSpi : public QObject
     Q_OBJECT
 
 public:
-    explicit CSpi(QObject *parent = 0, char noCs = '0', int speed=250000);
-    int lire1octet(unsigned char *buffer);
-    int ecrire(unsigned char *buffer, int lg);
+    explicit CSpi(QObject *parent = 0, char noCs = '0', int speed=7000000);
+    int lireNOctets(char *buffer, int n);
+    int ecrireNOctets(quint8 *buffer, int n);
 
 private:
     int init();
-    int mAddr;   // Adresse du composant SPI
-    char mNoCe;   // No du device CE/
-    int mSpeed;   // vitesse du bus SPI pour CE0
-    int mFileSpi;  // descripteur du fichier Spi
+    //int m_addr;   // Adresse du composant SPI
+    char m_noCe;   // No du device CE/
+    int m_speed;   // vitesse du bus SPI pour CE0
+    int m_fileSpi;  // descripteur du fichier Spi
 
 signals:
     void sigErreur(QString msg);

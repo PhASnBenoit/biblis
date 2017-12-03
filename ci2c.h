@@ -25,15 +25,15 @@ public:
     int ecrire(unsigned char addr, unsigned char *buffer, int lg);
     int init();
     int getNbLink();
-    QMutex mutexI2c;
+    QMutex m_mutexI2c;
 
 private:
     explicit CI2c(QObject *parent = 0, char noBus = '1');
-    int mAddr;   // Adresse du composant I2C
-    char mNoBus;   // No d'accès au fichier /dev
-    int mFileI2c;  // descripteur du fichier i2C
-    int mNbLink;
-    static CI2c *mSingleton;
+    int m_addr;   // Adresse du composant I2C
+    char m_noBus;   // No d'accès au fichier /dev
+    int m_fileI2c;  // descripteur du fichier i2C
+    int m_nbLink;
+    static CI2c *m_singleton;
 
 signals:
     void sigErreur(QString msg);

@@ -23,15 +23,16 @@ public :
     int ecrire(int value);
 
 private :
-    char mFilename[50];
-    QString mNomFic;
+    char m_filename[50];
+    int m_addr;
+    QString m_nomFic;
     int init();
     int gpioExport();
     int gpioUnexport();
     int gpioDirection(int dir);
     int gpioRead();
     int gpioWrite(int value);
-    int mAddr;
+
 
 signals:
     void sigErreur(QString msg);

@@ -3,22 +3,25 @@
 CSpi::CSpi(QObject *parent, char noCs, int speed) :
     QObject(parent)
 {
-    mNoCe = noCs;   // chip select
-    mSpeed = speed;
+    m_noCe = noCs;   // chip select
+    m_speed = speed;
     init();
     qDebug() << "Démarrage de l'objet CSpi";
 } // constructeur
 
 /////////////////////////////////////////////////////////////////
-int CSpi::lire1octet(unsigned char *buffer)
+int CSpi::lireNOctets(char *buffer, int n)
 {
-    return read(mFileSpi, buffer, 1);
+    return read(m_fileSpi, buffer, n);
 } // lire
 
 /////////////////////////////////////////////////////////////////
-int CSpi::ecrire(unsigned char *buffer, int lg)
+int CSpi::ecrireNOctets(quint8 *buffer, int n)
 {
-    return write(mFileSpi, buffer, lg);
+    int nb = write(m_fileSpi, buffer, n);
+    if (nb !=n)
+        emit sigErreur("CSpi::ecrireNOctets ERREUR écriture");
+    return nb;
 } // ecrire
 
 /////////////////////////////////////////////////////////////////
@@ -26,21 +29,19 @@ int CSpi::init()
 {
     char filename[20];
 
-    sprintf(filename, "/dev/spidev0.%c", mNoCe);
-
-    mFileSpi=open(filename, O_RDWR);
-    if(mFileSpi==-1) {  // ouvre le fichier virtuel d'accès à SPI
+    sprintf(filename, "/dev/spidev0.%c", m_noCe);
+    m_fileSpi=open(filename, O_RDWR);
+    if(m_fileSpi==-1) {  // ouvre le fichier virtuel d'accès à SPI
         QString mess="CSpi::init Erreur ouverture acces au bus SPI";
         qDebug() << mess;
         emit sigErreur(mess);
         return -1;
     } // if open
-    if (ioctl(mFileSpi, SPI_IOC_WR_MAX_SPEED_HZ, & mSpeed) != 0)
-    {
+    if (ioctl(m_fileSpi, SPI_IOC_WR_MAX_SPEED_HZ, & m_speed) != 0) {
         QString mess="CSpi::init Erreur ouverture acces au bus SPI";
          qDebug() << mess;
          emit sigErreur(mess);
          return -1;
     } // if
-    return mFileSpi;
+    return m_fileSpi;
 } // init
