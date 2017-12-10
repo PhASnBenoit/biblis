@@ -13,7 +13,7 @@ int CI2c::lire(unsigned char addr,  unsigned char *buffer, int lg)
 {
     if(ioctl(m_fileI2c, I2C_SLAVE, addr)!=0) {  // Règle le driver I2C sur l'adresse.
         QString mess="CI2c::lire Erreur ioctl acces au bus I2C";
-        qDebug() << mess;
+//        qDebug() << mess;
         emit sigErreur(mess);
         return -1;
     } // if ioctl
@@ -29,7 +29,7 @@ int CI2c::ecrire(unsigned char addr, unsigned char *buffer, int lg)
 {
     if(ioctl(m_fileI2c, I2C_SLAVE, addr)!=0) {  // Règle le driver I2C sur l'adresse.
         QString mess="CI2c::ecrire Erreur ioctl acces au bus I2C";
-        qDebug() << mess;
+//        qDebug() << mess;
         emit sigErreur(mess);
         return -1;
     } // if ioctl
@@ -47,7 +47,7 @@ int CI2c::init()
     sprintf(filename, "/dev/i2c-%c",m_noBus);
     if((m_fileI2c=open(filename, O_RDWR))==-1) {  // ouvre le fichier virtuel d'accès à l'I2C
         QString mess="CI2c::init Erreur ouverture acces au bus I2C";
-        qDebug() << mess;
+//        qDebug() << mess;
         emit sigErreur(mess);
         return -1;
     } // if open
