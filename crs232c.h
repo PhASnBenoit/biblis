@@ -23,11 +23,11 @@ public:
                     QSerialPort::Parity parity, QSerialPort::StopBits nbStop,
                     QSerialPort::FlowControl flow);
     int ouvrirPort();
-    char ecrire(char *trame, int nbOctets);
+    char ecrire(const char *trame, int nbOctets);
 
 private:
-    QSerialPort *mSp;
-    bool mRec;  // état pour purger les caractères parasites
+    QSerialPort *m_Sp;
+    QObject *m_parent;
 
 signals:
     void sigErreur(QSerialPort::SerialPortError err);

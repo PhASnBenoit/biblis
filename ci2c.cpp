@@ -3,6 +3,7 @@
 CI2c::CI2c(QObject *parent, char noBus) :
     QObject(parent)
 {
+    m_parent = parent;
     m_noBus = noBus;
     m_nbLink=0;
 } // constructeur
@@ -63,7 +64,7 @@ CI2c *CI2c::getInstance(QObject *parent, char no)
 {
     if (m_singleton == NULL)
     {
-        qDebug("L'objet CI2c sera créé !");
+        qDebug("L'objet CI2c est créé");
         m_singleton =  new CI2c(parent, no);
         m_singleton->init();
         m_singleton->m_nbLink=1;
@@ -71,7 +72,7 @@ CI2c *CI2c::getInstance(QObject *parent, char no)
     else
     {
         m_singleton->m_nbLink++;
-        qDebug("singleton already created!");
+        qDebug("singleton est déjà existant");
     }
     return m_singleton;
 } // getInstance

@@ -17,7 +17,7 @@ class CGpio : public QObject
     Q_OBJECT
 
 public :
-    explicit CGpio(int addr = 4, int dir = OUT);
+    explicit CGpio(QObject *parent = 0, int addr = 4, int dir = OUT);
     ~CGpio();
     int lire();
     int ecrire(int value);
@@ -25,6 +25,7 @@ public :
 private :
     char m_filename[50];
     int m_addr;
+    QObject *m_parent;
     QString m_nomFic;
     int init();
     int gpioExport();

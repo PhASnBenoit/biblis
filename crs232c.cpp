@@ -2,54 +2,56 @@
 
 CRs232c::CRs232c(QObject *parent, const QString &nomPort)
 {
-  mSp = new QSerialPort(parent);
-  mSp->setPortName(nomPort);
-  connect(mSp, SIGNAL(readyRead()), this, SLOT(onReadyRead()));
-  connect(mSp, SIGNAL(error(QSerialPort::SerialPortError)), this, SLOT(onErreur(QSerialPort::SerialPortError)));
+    m_parent = parent;
+    m_Sp = new QSerialPort(parent);
+    m_Sp->setPortName(nomPort);
+    connect(m_Sp, SIGNAL(readyRead()), this, SLOT(onReadyRead()));
+    connect(m_Sp, SIGNAL(error(QSerialPort::SerialPortError)), this, SLOT(onErreur(QSerialPort::SerialPortError)));
+    qDebug() << "L'objet CRs232c est créé par " << m_parent->thread();
 }
 
 CRs232c::~CRs232c()
 {
-    mSp->close();
-    delete mSp;
+    m_Sp->close();
+    delete m_Sp;
+    qDebug() << "L'objet CRs232c est détruit par " << m_parent->thread();
 }
 
 int CRs232c::initialiser(QSerialPort::BaudRate vitesse, QSerialPort::DataBits data,
                          QSerialPort::Parity parity, QSerialPort::StopBits nbStop,
                          QSerialPort::FlowControl flow)
 {
-    mSp->setBaudRate(vitesse);
-    mSp->setDataBits(data);
-    mSp->setParity(parity);
-    mSp->setStopBits(nbStop);
-    mSp->setFlowControl(flow);
+    m_Sp->setBaudRate(vitesse);
+    m_Sp->setDataBits(data);
+    m_Sp->setParity(parity);
+    m_Sp->setStopBits(nbStop);
+    m_Sp->setFlowControl(flow);
     return 0;
 }
 
 int CRs232c::ouvrirPort()
 {
     bool res=false;
-    res=mSp->open(QIODevice::ReadWrite);
+    res=m_Sp->open(QIODevice::ReadWrite);
     if (!res) {
-        mSp->close();
+        m_Sp->close();
     } // if res
-    return mSp->isOpen();
+    return m_Sp->isOpen();
 }
 
-char CRs232c::ecrire(char *trame, int nbOctets)
+char CRs232c::ecrire(const char *trame, int nbOctets)
 {
-    mRec = true; // les futurs cars arrivant sont valides
-    int lg = mSp->write(trame, nbOctets);
+    int lg = m_Sp->write(trame, nbOctets);
     if ( lg < nbOctets) {
         return ERREUR;
     } // if erreur
-    return OK;
+    return lg;
 }
 
 void CRs232c::onReadyRead()
 {
     QByteArray ba;
-    ba = mSp->readAll();
+    ba = m_Sp->readAll();
     emit sigData(ba);
 }
 

@@ -1,7 +1,8 @@
 #include "cgpio.h"
 
-CGpio::CGpio(int addr, int dir)
+CGpio::CGpio(QObject *parent, int addr, int dir)
 {
+    m_parent=parent;
     m_addr = addr;
     gpioExport();
     init();
