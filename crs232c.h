@@ -26,7 +26,7 @@ public:
     char ecrire(const char *trame, int nbOctets);
 
 private:
-    QSerialPort *m_Sp;
+    QSerialPort *m_sp;
     QObject *m_parent;
 
 signals:

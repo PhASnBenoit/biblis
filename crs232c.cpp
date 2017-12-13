@@ -3,17 +3,18 @@
 CRs232c::CRs232c(QObject *parent, const QString &nomPort)
 {
     m_parent = parent;
-    m_Sp = new QSerialPort(parent);
-    m_Sp->setPortName(nomPort);
-    connect(m_Sp, SIGNAL(readyRead()), this, SLOT(onReadyRead()));
-    connect(m_Sp, SIGNAL(error(QSerialPort::SerialPortError)), this, SLOT(onErreur(QSerialPort::SerialPortError)));
+    m_sp = new QSerialPort(parent);
+    connect(m_sp, SIGNAL(readyRead()), this, SLOT(onReadyRead()));
+    connect(m_sp, SIGNAL(error(QSerialPort::SerialPortError)), this, SLOT(onErreur(QSerialPort::SerialPortError)));
     qDebug() << "L'objet CRs232c est créé par " << m_parent->thread();
+    m_sp->setPortName(nomPort);
+    qDebug() << nomPort;
 }
 
 CRs232c::~CRs232c()
 {
-    m_Sp->close();
-    delete m_Sp;
+    m_sp->close();
+    delete m_sp;
     qDebug() << "L'objet CRs232c est détruit par " << m_parent->thread();
 }
 
@@ -21,28 +22,30 @@ int CRs232c::initialiser(QSerialPort::BaudRate vitesse, QSerialPort::DataBits da
                          QSerialPort::Parity parity, QSerialPort::StopBits nbStop,
                          QSerialPort::FlowControl flow)
 {
-    m_Sp->setBaudRate(vitesse);
-    m_Sp->setDataBits(data);
-    m_Sp->setParity(parity);
-    m_Sp->setStopBits(nbStop);
-    m_Sp->setFlowControl(flow);
+    m_sp->setBaudRate(vitesse);
+    m_sp->setDataBits(data);
+    m_sp->setParity(parity);
+    m_sp->setStopBits(nbStop);
+    m_sp->setFlowControl(flow);
     return 0;
 }
 
 int CRs232c::ouvrirPort()
 {
     bool res=false;
-    res=m_Sp->open(QIODevice::ReadWrite);
+    res=m_sp->open(QIODevice::ReadWrite);
     if (!res) {
-        m_Sp->close();
+//        emit sigErreur(m_sp->error());
+        m_sp->close();
     } // if res
-    return m_Sp->isOpen();
+    return res;
 }
 
 char CRs232c::ecrire(const char *trame, int nbOctets)
 {
-    int lg = m_Sp->write(trame, nbOctets);
+    int lg = m_sp->write(trame, nbOctets);
     if ( lg < nbOctets) {
+        emit sigErreur(QSerialPort::WriteError);
         return ERREUR;
     } // if erreur
     return lg;
@@ -51,7 +54,7 @@ char CRs232c::ecrire(const char *trame, int nbOctets)
 void CRs232c::onReadyRead()
 {
     QByteArray ba;
-    ba = m_Sp->readAll();
+    ba = m_sp->readAll();
     emit sigData(ba);
 }
 
