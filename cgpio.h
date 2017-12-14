@@ -34,7 +34,6 @@ private :
     int gpioRead();
     int gpioWrite(int value);
 
-
 signals:
     void sigErreur(QString msg);
 };

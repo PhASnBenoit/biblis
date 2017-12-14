@@ -33,7 +33,7 @@ signals:
     void sigErreur(QSerialPort::SerialPortError err);
     void sigData(QByteArray ba);
 
-public slots:
+private  slots:
     void onReadyRead();
     void onErreur(QSerialPort::SerialPortError err);
 };

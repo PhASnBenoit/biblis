@@ -24,12 +24,12 @@ public:
     int lire(unsigned char addr, unsigned char *buffer, int lg);
     int ecrire(unsigned char addr, unsigned char *buffer, int lg);
     int init();
-    int getNbLink();
-    QMutex m_mutexI2c;
 
 private:
     explicit CI2c(QObject *parent = 0, char noBus = '1');
     QObject *m_parent;
+    QMutex m_mutexI2c;
+    int getNbLink();
     int m_addr;   // Adresse du composant I2C
     char m_noBus;   // No d'accès au fichier /dev
     int m_fileI2c;  // descripteur du fichier i2C
