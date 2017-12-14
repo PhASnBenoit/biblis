@@ -1,8 +1,9 @@
 #include "cspi.h"
 
-CSpi::CSpi(QObject *parent, char noCs, int speed, bool csHigh) :
+CSpi::CSpi(QObject *parent, char noCs, int speed, bool csHigh, int mode) :
     QObject(parent)
 {
+    m_mode = mode;
     m_csHigh = csHigh;
     m_noCe = noCs;   // chip select
     m_speed = speed;
@@ -60,7 +61,7 @@ int CSpi::init()
         emit sigErreur(mess);
         return -1;
     } // if open
-    quint8 mode=(m_csHigh?SPI_CS_HIGH:0)|SPI_MODE_1;
+    quint8 mode=(m_csHigh?SPI_CS_HIGH:0)|m_mode;
     if (ioctl(m_fileSpi, SPI_IOC_WR_MODE, &mode) != 0) {
         QString mess="CSpi::init Erreur ouverture acces au bus SPI";
          emit sigErreur(mess);
