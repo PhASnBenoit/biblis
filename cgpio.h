@@ -11,6 +11,7 @@
 #define OUT 1
 #define SWITCH_ON 1
 #define SWITCH_OFF 0
+#define BOTH 2
 
 class CGpio : public QObject
 {
@@ -30,6 +31,7 @@ private :
     int init();
     int gpioExport();
     int gpioUnexport();
+    int gpioEdge(int edge);
     int gpioDirection(int dir);
     int gpioRead();
     int gpioWrite(int value);

@@ -7,6 +7,7 @@ CGpio::CGpio(QObject *parent, int addr, int dir)
     gpioExport();
     init();
     gpioDirection(dir);
+    gpioEdge(BOTH);
 } // constructeur
 
 CGpio::~CGpio()
@@ -38,7 +39,7 @@ int CGpio::gpioUnexport()
         return -1;
     } // if erreur open
     sprintf(buffer,"%d", m_addr);
-    int nbw = fUnexport.write(buffer, strlen(buffer));
+    qint64 nbw = fUnexport.write(buffer, strlen(buffer));
     if (nbw != int(strlen(buffer))) {
         QString mess="CGpio::gpioUnexport: Erreur écriture dans fichier !";
         qDebug() << mess;
@@ -51,7 +52,7 @@ int CGpio::gpioUnexport()
 
 int CGpio::gpioDirection(int dir)
 {
-    char buffer[3];
+    char buffer[5];
     QString ficDirection;
 
     ficDirection = QString("/sys/class/gpio/gpio%1/direction").arg(m_addr,0,10);
@@ -67,7 +68,7 @@ int CGpio::gpioDirection(int dir)
       strcpy(buffer,"in");
     else
       strcpy(buffer,"out");
-    int nbw = fDirection.write(buffer, strlen(buffer));
+    qint64 nbw = fDirection.write(buffer, strlen(buffer));
     if (nbw != int(strlen(buffer))) {
         QString mess="CGpio::gpioDirection: Erreur écriture dans fichier !";
 //        qDebug() << mess;
@@ -77,6 +78,37 @@ int CGpio::gpioDirection(int dir)
     fDirection.close();
     return 0;
 }
+
+int CGpio::gpioEdge(int edge)
+{
+    char buffer[5];
+    QString ficEdge;
+
+    ficEdge = QString("/sys/class/gpio/gpio%1/edge").arg(m_addr,0,10);
+    QFile fEdge(ficEdge);
+    bool res = fEdge.open(QIODevice::WriteOnly | QIODevice::Text);
+    if (!res) {
+        QString mess="CGpio::gpioEdge: Erreur d'ouverture du fichier !";
+//        qDebug() << mess;
+        emit sigErreur(mess);
+        return -1;
+    } // if erreur open
+    if (edge==BOTH)
+      strcpy(buffer,"both");
+    else
+      strcpy(buffer,"none");
+    qint64 nbw = fEdge.write(buffer, strlen(buffer));
+    if (nbw != int(strlen(buffer))) {
+        QString mess="CGpio::gpioEdge: Erreur écriture dans fichier !";
+//        qDebug() << mess;
+        emit sigErreur(mess);
+        return -1;
+    } // if nbw
+    fEdge.close();
+    return 0;
+}
+
+
 
 int CGpio::gpioExport()
 {
@@ -91,7 +123,7 @@ int CGpio::gpioExport()
         return -1;
     } // if erreur open
     sprintf(buffer,"%d", m_addr);
-    int nbw = fExport.write(buffer, strlen(buffer));
+    qint64 nbw = fExport.write(buffer, strlen(buffer));
     if (nbw != int(strlen(buffer))) {
         QString mess="CGpio::gpioExport: Erreur écriture dans fichier !";
 //        qDebug() << mess;
@@ -118,7 +150,7 @@ int CGpio::lire()
         return -1;
     } // if erreur open
 
-    int nbr = fValue.read(buffer, sizeof(buffer));
+    qint64 nbr = fValue.read(buffer, sizeof(buffer));
     if (nbr == -1) {
         QString mess="CGpio::gpioLire: Erreur lecture dans fichier !";
 //        qDebug() << mess;
@@ -145,7 +177,7 @@ int CGpio::ecrire(int value)
         return -1;
     } // if erreur open
 
-    int nbw = fValue.write(&buffer[(value==0?0:1)], 1);
+    qint64 nbw = fValue.write(&buffer[(value==0?0:1)], 1);
     if (nbw == -1) {
         QString mess="CGpio::gpioEcrire: Erreur écriture dans fichier !";
 //        qDebug() << mess;
@@ -154,5 +186,4 @@ int CGpio::ecrire(int value)
     } // if nbw
     fValue.close();
     return 0;
-
 }	
