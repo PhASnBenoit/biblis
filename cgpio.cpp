@@ -28,7 +28,7 @@ int CGpio::init()
 
 int CGpio::gpioUnexport()
 {
-    char buffer[3];
+    char buffer[5];
 
     QFile fUnexport("/sys/class/gpio/unexport");
     bool res = fUnexport.open(QIODevice::WriteOnly | QIODevice::Text);
@@ -112,7 +112,7 @@ int CGpio::gpioEdge(int edge)
 
 int CGpio::gpioExport()
 {
-    char buffer[3];
+    char buffer[5];
 
     QFile fExport("/sys/class/gpio/export");
     bool res = fExport.open(QIODevice::WriteOnly | QIODevice::Text);
@@ -137,7 +137,7 @@ int CGpio::gpioExport()
 
 int CGpio::lire()
 {
-    char buffer[3];
+    char buffer[5];
     QString ficValue;
 
     ficValue = QString("/sys/class/gpio/gpio%1/value").arg(m_addr,0,10);
@@ -164,7 +164,7 @@ int CGpio::lire()
 	
 int CGpio::ecrire(int value)
 {
-    char buffer[3]={'0', '1'};
+    char buffer[5]={'0', '1'};
     QString ficValue;
 
     ficValue = QString("/sys/class/gpio/gpio%1/value").arg(m_addr,0,10);
