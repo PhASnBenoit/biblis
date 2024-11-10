@@ -1,5 +1,5 @@
 #include "cgpio2024.h"
-
+// changement de la bibliothèque pour les nouvelles versions de RPI OS
 CGpio2024::CGpio2024(QObject *parent, int noGpio, QString compo)
     : QObject{parent}
 {
