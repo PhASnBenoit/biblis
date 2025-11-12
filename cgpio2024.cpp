@@ -50,10 +50,10 @@ void CGpio2024::setTo(int state)
     _args << _compo;
     _args << QString::number(_noGpio)+"="+QString::number(state);
     p = new QProcess(this);
+    p->start(_command, _args);
     if (!p->waitForFinished(500)) {
         delete p;
         return;
     }
-    p->start(_command, _args);
     delete p;
 }
