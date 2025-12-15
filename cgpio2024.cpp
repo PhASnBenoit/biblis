@@ -28,6 +28,7 @@ int CGpio2024::getGpio()
 
     _command = "gpioget";
     _args.clear();
+    _args << "-c";
     _args << _compo;
     _args << QString::number(_noGpio);
     p = new QProcess(this);
@@ -38,6 +39,7 @@ int CGpio2024::getGpio()
     }
     int ret = p->readAllStandardOutput().toInt();
     delete p;
+//    qDebug() << ret;
     return ret;
 }
 
@@ -47,6 +49,7 @@ void CGpio2024::setTo(int state)
 
     _command = "gpioset";
     _args.clear();
+    _args << "-c";
     _args << _compo;
     _args << QString::number(_noGpio)+"="+QString::number(state);
     p = new QProcess(this);

@@ -3,6 +3,7 @@
 #define CGPIO2024_H
 
 #include <QObject>
+#include <QDebug>
 #include <QProcess>
 #include <QString>
 #include <QStringList>
