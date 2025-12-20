@@ -25,6 +25,7 @@ CGPIO2026::CGPIO2026(int gpio, Mode mode, QObject *parent)
     if (_mode == Output) {
         gpiod_line_settings_set_direction(
             settings, GPIOD_LINE_DIRECTION_OUTPUT);
+        gpiod_line_settings_set_output_value(settings, GPIOD_LINE_VALUE_INACTIVE);
     } else {
         gpiod_line_settings_set_direction(
             settings, GPIOD_LINE_DIRECTION_INPUT);
@@ -34,33 +35,32 @@ CGPIO2026::CGPIO2026(int gpio, Mode mode, QObject *parent)
 
     // Line config
     gpiod_line_config *line_cfg = gpiod_line_config_new();
-    unsigned int offsets[1] = {
-        static_cast<unsigned int>(_gpio)
-};
-gpiod_line_config_add_line_settings(
-    line_cfg, offsets, 1, settings);
+    unsigned int offsets[1] = {static_cast<unsigned int>(_gpio)};
 
-// Request config
-gpiod_request_config *req_cfg = gpiod_request_config_new();
-gpiod_request_config_set_consumer(req_cfg, "CGPIO2026");
+    gpiod_line_config_add_line_settings(
+        line_cfg, offsets, 1, settings);
 
-// Request line
-_request = gpiod_chip_request_lines(
-    _chip, req_cfg, line_cfg);
-if (!_request)
-    throw std::runtime_error("Impossible de demander la ligne GPIO");
+    // Request config
+    struct gpiod_request_config *req_cfg = gpiod_request_config_new();
+    gpiod_request_config_set_consumer(req_cfg, "CGPIO2026");
 
-// Pour les entr�es : r�cup�rer le fd
-if (_mode == Input) {
-    _fd = gpiod_line_request_get_fd(_request);
-    if (_fd < 0)
-        throw std::runtime_error("Impossible d'obtenir le fd GPIO");
-}
+    // Request line
+    _request = gpiod_chip_request_lines(
+        _chip, req_cfg, line_cfg);
+    if (!_request)
+        throw std::runtime_error("Impossible de demander la ligne GPIO"+std::to_string(_gpio));
 
-// Lib�ration des configs
-gpiod_line_settings_free(settings);
-gpiod_line_config_free(line_cfg);
-gpiod_request_config_free(req_cfg);
+    // Pour les entr�es : r�cup�rer le fd
+    if (_mode == Input) {
+        _fd = gpiod_line_request_get_fd(_request);
+        if (_fd < 0)
+            throw std::runtime_error("Impossible d'obtenir le fd GPIO");
+    }
+
+    // Lib�ration des configs
+    gpiod_line_settings_free(settings);
+    gpiod_line_config_free(line_cfg);
+    gpiod_request_config_free(req_cfg);
 }
 
 CGPIO2026::~CGPIO2026()
@@ -84,7 +84,7 @@ void CGPIO2026::setValue(bool value)
 
     gpiod_line_request_set_value(
         _request,
-        0,  // index dans la requ�te
+        _gpio,  // index dans la requ�te ATTENTION DOIT ETRE LE NUMERO DE LA GPIO
         value ? GPIOD_LINE_VALUE_ACTIVE
               : GPIOD_LINE_VALUE_INACTIVE
         );
